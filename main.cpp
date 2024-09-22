@@ -81,7 +81,8 @@ public:
                     if(theItem[i].coefficient.up>0)cout<<" + ";
                     else cout<<" - ";
                 }
-                else if(highest_degree==0 and theItem[i].coefficient.up<0)cout<<" -";
+                else if(theItem[i].coefficient.up<0)cout<<" -";
+                //else if(highest_degree==0 and theItem[i].coefficient.up<0)cout<<" -";
                 if(i!=0)theItem[i].coefficient.print(true);
                 else theItem[i].coefficient.print(false);
                 if(i>1)cout<<"x^"<<i;
@@ -230,7 +231,6 @@ polynomial GCD(polynomial a,polynomial b) {
     r_polynomial[++number_r_polynomial]=re.r;
     return GCD(b,re.r);
 }
-
 int main() {
     polynomial a,b;
     a.ini();
@@ -270,13 +270,28 @@ int main() {
     */
     polynomial justOne;
     justOne.getPolyNomial("1");
+    polynomial justZero_One;
+    justZero_One.getPolyNomial("-1");
     cout<<endl;
+    if((number_q_polynomial==2 and !isLastrIs0) or (number_q_polynomial==3 and isLastrIs0) ) {
+        cout<<"u(x):";
+        polynomial u=MultiplyPolynomial(justZero_One,q_polynomial[2]);
+        u=MultiplyPolynomial(u,c);
+        u.PrintPolynomial(true);
+        polynomial v=DividePolynomial(SubtractPolynomial(gcdP_monic,MultiplyPolynomial(u,a)),b).q;
+        cout<<"v(x): ";
+        v.PrintPolynomial(true);
+        //SubtractPolynomial(MultiplyPolynomial(u,a),MultiplyPolynomial(v,b)).PrintPolynomial(true);
+    }
     if(number_q_polynomial==3 and !isLastrIs0) {
         cout<<"u(x):";
-        MultiplyPolynomial(c,AddPolynomial(justOne,MultiplyPolynomial(q_polynomial[2],q_polynomial[3]))).PrintPolynomial(true);
-        cout<<"V(x):";
-        MultiplyPolynomial(c,SubtractPolynomial(MultiplyPolynomial(MultiplyPolynomial(q_polynomial[1],q_polynomial[2]),q_polynomial[3]),AddPolynomial(q_polynomial[1],q_polynomial[2]))).PrintPolynomial(true);
-
+        polynomial u=MultiplyPolynomial(c,AddPolynomial(justOne,MultiplyPolynomial(q_polynomial[2],q_polynomial[3])));
+        u.PrintPolynomial(true);
+        cout<<"v(x): ";
+        //polynomial v=MultiplyPolynomial(c,SubtractPolynomial(AddPolynomial(q_polynomial[1],q_polynomial[2]),MultiplyPolynomial(MultiplyPolynomial(q_polynomial[1],q_polynomial[2]),q_polynomial[3])));
+        polynomial v=DividePolynomial(SubtractPolynomial(gcdP_monic,MultiplyPolynomial(u,a)),b).q;
+        v.PrintPolynomial(true);
+        //SubtractPolynomial(MultiplyPolynomial(u,a),MultiplyPolynomial(v,b)).PrintPolynomial(true);
     }
     return 0;
 }
