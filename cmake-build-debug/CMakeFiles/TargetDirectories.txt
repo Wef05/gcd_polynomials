@@ -1,0 +1,3 @@
+/Users/limingzhe/gcd_polynomials/cmake-build-debug/CMakeFiles/gcd_polynomials.dir
+/Users/limingzhe/gcd_polynomials/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/limingzhe/gcd_polynomials/cmake-build-debug/CMakeFiles/rebuild_cache.dir
