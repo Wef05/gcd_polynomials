@@ -70,8 +70,9 @@ public:
         for(int i=highest_degree;i>=0;i--) {
             if(theItem[i].coefficient.up!=0) {
                 isAllIsZero=false;
-                if(i==highest_degree) {
-                    if(theItem[i].coefficient.up<0)cout<<"-";
+                if(i!=highest_degree) {
+                    if(theItem[i].coefficient.up>0)cout<<" + ";
+                    else cout<<" - ";
                 }
                 if(i!=0)theItem[i].coefficient.print(true);
                 else theItem[i].coefficient.print(false);
