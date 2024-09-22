@@ -15,6 +15,14 @@ public:
         int thegcd=gcd(up,down);
         up/=thegcd;
         down/=thegcd;
+        if(down<0 and up<0) {
+            down*=0-1;
+            up*=0-1;
+        }
+        if(down<0 and up>0) {
+            down*=0-1;
+            up*=0-1;
+        }
     }
     void print(bool isdegreeover0) {
         if((up==-1 or up==1 ) and down==1 and isdegreeover0)return;
@@ -73,6 +81,7 @@ public:
                     if(theItem[i].coefficient.up>0)cout<<" + ";
                     else cout<<" - ";
                 }
+                else if(highest_degree==0 and theItem[i].coefficient.up<0)cout<<" -";
                 if(i!=0)theItem[i].coefficient.print(true);
                 else theItem[i].coefficient.print(false);
                 if(i>1)cout<<"x^"<<i;
@@ -150,6 +159,7 @@ public:
 polynomial AddPolynomial(polynomial a,polynomial b) {
     polynomial c;
     c.ini();
+    c.highest_degree=0;
     for(int i=0;i<MAX_ITEM;i++) {
         c.theItem[i].coefficient=addNumber(a.theItem[i].coefficient,b.theItem[i].coefficient);
         if(c.theItem[i].coefficient.up!=0)c.highest_degree=i;
@@ -201,12 +211,23 @@ divideResult DividePolynomial(polynomial a,polynomial b) {
     re.r=result_r;
     return re;
 }
+polynomial q_polynomial[MAX_ITEM];
+int number_q_polynomial=0;
+polynomial r_polynomial[MAX_ITEM];
+int number_r_polynomial=0;
+bool isLastrIs0=false;
 polynomial GCD(polynomial a,polynomial b) {
-    divideResult re=DividePolynomial(a,b);
     if(b.highest_degree==0) {
-        return a;
+        if(b.theItem[0].coefficient.up==0) {
+            isLastrIs0=true;
+            return a;
+        }
+        return b;
     }
+    divideResult re=DividePolynomial(a,b);
     cout<<"(";a.PrintPolynomial(false);cout<<") = (";b.PrintPolynomial(false);cout<<") * (";re.q.PrintPolynomial(false);cout<<") + (";re.r.PrintPolynomial(false);cout<<")"<<endl;
+    q_polynomial[++number_q_polynomial]=re.q;
+    r_polynomial[++number_r_polynomial]=re.r;
     return GCD(b,re.r);
 }
 
@@ -215,14 +236,54 @@ int main() {
     a.ini();
     b.ini();
     string sa,sb;
+    cout<<"f(x):";
     cin>>sa;
     a.getPolyNomial(sa);
+    cout<<"g(x):";
     cin>>sb;
     b.getPolyNomial(sb);
+/*
+    divideResult c=DividePolynomial(a,b);
+    c.q.PrintPolynomial(true);
+    c.r.PrintPolynomial(true);
+*/
+    polynomial gcdP=GCD(a,b);
+    polynomial c;
+    c.highest_degree=0;
+    c.theItem[0].coefficient.up=gcdP.theItem[gcdP.highest_degree].coefficient.down;
+    c.theItem[0].coefficient.down=gcdP.theItem[gcdP.highest_degree].coefficient.up;
+    polynomial gcdP_monic=MultiplyPolynomial(gcdP,c);
+    cout<<endl<<"gcd of f(x),g(x) = ";
+    gcdP.PrintPolynomial(true);
+    cout<<"(f(x),g(x))= ";
+    gcdP_monic.PrintPolynomial(true);
+    /*
+    cout<<endl<<" q: ";
+    for(int i=1;i<=number_q_polynomial;i++) {
+        q_polynomial[i].PrintPolynomial(false);cout<<" ; ";
+    }
+    cout<<endl<<" r: ";
+    for(int i=1;i<=number_r_polynomial;i++) {
+        r_polynomial[i].PrintPolynomial(false);cout<<" ; ";
+    }
+    cout<<endl;
+    */
+    polynomial justOne;
+    justOne.getPolyNomial("1");
+    cout<<endl;
+    if(number_q_polynomial==3 and !isLastrIs0) {
+        cout<<"u(x):";
+        MultiplyPolynomial(c,AddPolynomial(justOne,MultiplyPolynomial(q_polynomial[2],q_polynomial[3]))).PrintPolynomial(true);
+        cout<<"V(x):";
+        MultiplyPolynomial(c,SubtractPolynomial(MultiplyPolynomial(MultiplyPolynomial(q_polynomial[1],q_polynomial[2]),q_polynomial[3]),AddPolynomial(q_polynomial[1],q_polynomial[2]))).PrintPolynomial(true);
 
-    //divideResult c=DividePolynomial(a,b);
-    //c.q.PrintPolynomial(true);
-    //c.r.PrintPolynomial(true);
-    GCD(a,b);
+    }
     return 0;
 }
+/*
+x^4-4x^3+x+2
+x^3-2x+1
+
+2x^3+5x+1
+x^3-x^2+2x+6
+*/
